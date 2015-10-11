@@ -8,4 +8,17 @@
         <servlet-name>xspf2podcast</servlet-name>
         <url-pattern>/xspf2podcast</url-pattern>
     </servlet-mapping>
+
+    <servlet>
+        <servlet-name>shortcut</servlet-name>
+        <jsp-file>shortcut.jsp</jsp-file>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>shortcut</servlet-name>
+        <url-pattern>/zzz/*</url-pattern>
+    </servlet-mapping>
+
+    <welcome-file-list>
+        <welcome-file>index.jsp</welcome-file>
+    </welcome-file-list>
 </web-app>
