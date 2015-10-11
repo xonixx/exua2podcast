@@ -1,10 +1,12 @@
 package info.xonix;
 
 import javax.servlet.ServletException;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
 import java.util.logging.Logger;
 
@@ -23,21 +25,23 @@ public class Xspf2PodcastServlet extends HttpServlet {
 
         resp.setCharacterEncoding("UTF-8");
 
-        PrintWriter writer = resp.getWriter();
+        try (InputStream xslInputStream = getClass().getClassLoader().getResourceAsStream("xspf2rss.xsl");
+             PrintWriter writer = resp.getWriter()) {
 
-        if (xspfUrl == null) {
-            resp.setContentType("text/html");
-            resp.setStatus(400);
-            writer.println("Please provide xspf URL!");
+            if (xspfUrl == null) {
+                resp.setContentType("text/html");
+                resp.setStatus(400);
+                writer.println("Please provide xspf URL!");
+                writer.flush();
+                return;
+            }
+
+            resp.setContentType("application/rss+xml");
+
+            String xspfText = Util.receiveUrlText(xspfUrl);
+
+            writer.print(Util.xsltTransform(xspfText, xslInputStream));
             writer.flush();
-            return;
         }
-
-        String xspfText = Util.receiveUrlText(xspfUrl);
-
-        resp.setContentType("application/rss+xml");
-
-        writer.write(xspfText);
-        writer.flush();
     }
 }

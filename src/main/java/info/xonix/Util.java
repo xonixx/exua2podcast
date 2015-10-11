@@ -1,6 +1,12 @@
 package info.xonix;
 
-import java.io.IOException;
+import javax.xml.transform.Source;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
+import java.io.*;
 import java.net.URL;
 import java.util.Scanner;
 
@@ -20,6 +26,28 @@ public final class Util {
         } finally {
             if (scanner != null)
                 scanner.close();
+        }
+    }
+
+    public static String xsltTransform(String xml, InputStream xslInputStream) {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        xsltTransform(xml, xslInputStream, baos);
+        try {
+            return baos.toString("UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    public static void xsltTransform(String xml, InputStream xslInputStream, OutputStream outputStream) {
+        try {
+            TransformerFactory factory = TransformerFactory.newInstance();
+            Source xslt = new StreamSource(xslInputStream);
+            Transformer transformer = factory.newTransformer(xslt);
+
+            Source text = new StreamSource(new StringReader(xml));
+            transformer.transform(text, new StreamResult(outputStream));
+        } catch (TransformerException e) {
+            throw new RuntimeException("Unable to do XSLT", e);
         }
     }
 
