@@ -1,5 +1,7 @@
 package info.xonix;
 
+import net.sf.saxon.TransformerFactoryImpl;
+
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
@@ -38,9 +40,16 @@ public final class Util {
             throw new RuntimeException(e);
         }
     }
+
     public static void xsltTransform(String xml, InputStream xslInputStream, OutputStream outputStream) {
         try {
-            TransformerFactory factory = TransformerFactory.newInstance();
+            /**
+             * We use Saxon, because built-in Xalan is buggy in GAE:
+             * javax.xml.transform.TransformerConfigurationException: Translet class loaded, but unable to create translet instance.
+             */
+//            TransformerFactory factory = TransformerFactory.newInstance();
+            TransformerFactory factory = new TransformerFactoryImpl();
+
             Source xslt = new StreamSource(xslInputStream);
             Transformer transformer = factory.newTransformer(xslt);
 
