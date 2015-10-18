@@ -2,6 +2,6 @@
 <title>Exua2podcast!</title>
 <h1>Exua2podcast!</h1>
 
-<a href="/shortcut.jsp?javascript:void(location.href='podcast://exua2podcast.appspot.com/xspf2podcast?xspf=http://www.ex.ua'+$('a[href$=xspf]').attr('href'))">
-Перейдите, чтоб подписаться
+<a href="/shortcut.jsp?javascript:void(location.href='podcast://exua2podcast.appspot.com/xspf2podcast?xspf=http://www.ex.ua'+$('a[href$=xspf]').attr('href')+'&img='+($('img[src$=&quot;?1600&quot;]').attr('src')||''))">
+Перейдите, чтоб установить шорткат для подписки
 </a>

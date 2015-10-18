@@ -21,6 +21,7 @@ public class Xspf2PodcastServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String xspfUrl = req.getParameter("xspf");
+        String imgUrl = req.getParameter("img");
         log.info("Received xspf URL: " + xspfUrl);
 
         resp.setCharacterEncoding("UTF-8");
@@ -39,6 +40,11 @@ public class Xspf2PodcastServlet extends HttpServlet {
             resp.setContentType("application/rss+xml");
 
             String xspfText = Util.receiveUrlText(xspfUrl);
+
+            if (imgUrl != null && !"".equals(imgUrl = imgUrl.trim())) {
+                // inject imgUrl into xspf for xsl
+                xspfText = xspfText.replace("<trackList>", "<img>" + imgUrl + "</img><trackList>");
+            }
 
             writer.print(Util.xsltTransform(xspfText, xslInputStream));
             writer.flush();

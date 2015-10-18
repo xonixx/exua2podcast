@@ -8,6 +8,9 @@
             <channel>
                 <title><xsl:value-of select="xspf:title"/></title>
                 <link><xsl:value-of select="xspf:location"/></link>
+                <xsl:if test="xspf:img">
+                    <itunes:image href="{xspf:img}"/>
+                </xsl:if>
             </channel>
 
             <xsl:apply-templates select="xspf:trackList/xspf:track"/>
