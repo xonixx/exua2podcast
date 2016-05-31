@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -46,7 +47,11 @@ public class Xspf2PodcastServlet extends HttpServlet {
                 xspfText = xspfText.replace("<trackList>", "<img>" + imgUrl + "</img><trackList>");
             }
 
-            writer.print(Util.xsltTransform(xspfText, xslInputStream));
+            try {
+                writer.print(Util.xsltTransform(xspfText, xslInputStream));
+            } catch (Exception ex) {
+                log.log(Level.SEVERE, "Unable to do XSLT for: " + xspfText, ex);
+            }
             writer.flush();
         }
     }
