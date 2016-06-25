@@ -10,6 +10,8 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 import java.io.*;
 import java.net.URL;
+import java.net.URLConnection;
+import java.util.Map;
 import java.util.Scanner;
 
 /**
@@ -19,9 +21,19 @@ import java.util.Scanner;
  */
 public final class Util {
     public static String receiveUrlText(String url) {
+        return receiveUrlText(url, null);
+    }
+    public static String receiveUrlText(String url, Map<String,String> headers) {
         Scanner scanner = null;
         try {
-            scanner = new Scanner(new URL(url).openStream(), "UTF-8");
+            URLConnection connection = new URL(url).openConnection();
+            if (headers != null) {
+                for (Map.Entry<String, String> entry : headers.entrySet()) {
+                    connection.addRequestProperty(entry.getKey(), entry.getValue());
+                }
+            }
+            InputStream source = connection.getInputStream();
+            scanner = new Scanner(source, "UTF-8");
             return scanner.useDelimiter("\\A").next();
         } catch (IOException e) {
             throw new RuntimeException("Unable to fetch: " + url, e);
