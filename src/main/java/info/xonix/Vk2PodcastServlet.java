@@ -38,17 +38,23 @@ public class Vk2PodcastServlet extends HttpServlet {
             }
 
 //            resp.setContentType("application/rss+xml");
-            resp.setContentType("text/html");
+            resp.setContentType("text/plain");
 
             String vkWallPageText = Util.receiveUrlText("https://vk.com/" + vk,
+                    "windows-1251",
                     Collections.singletonMap("User-Agent", "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36"));
 
             Document document = Jsoup.parse(vkWallPageText);
 
-            Elements elts = document.select("input[type=\"hidden\"][id^=\"audio_info\"]");
+            Elements audioDivs = document.select("div.audio[id^=\"audio\"]");
+//            Elements elts = document.select("input[type=\"hidden\"][id^=\"audio_info\"]");
 
-            for (Element elt : elts) {
-                writer.println(elt.val());
+            for (Element div : audioDivs) {
+                String mp3url = div.select("input[type=\"hidden\"][id^=\"audio_info\"]").first().val();
+                String name = div.select("div.title_wrap").first().text().trim();
+                writer.println(mp3url);
+                writer.println(name);
+                writer.println();
             }
 
             writer.flush();

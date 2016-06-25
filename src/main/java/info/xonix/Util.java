@@ -21,9 +21,10 @@ import java.util.Scanner;
  */
 public final class Util {
     public static String receiveUrlText(String url) {
-        return receiveUrlText(url, null);
+        return receiveUrlText(url, "UTF-8", null);
     }
-    public static String receiveUrlText(String url, Map<String,String> headers) {
+
+    public static String receiveUrlText(String url, String charset, Map<String, String> headers) {
         Scanner scanner = null;
         try {
             URLConnection connection = new URL(url).openConnection();
@@ -33,7 +34,7 @@ public final class Util {
                 }
             }
             InputStream source = connection.getInputStream();
-            scanner = new Scanner(source, "UTF-8");
+            scanner = new Scanner(source, charset);
             return scanner.useDelimiter("\\A").next();
         } catch (IOException e) {
             throw new RuntimeException("Unable to fetch: " + url, e);
