@@ -5,3 +5,6 @@
 <a href="/shortcut.jsp?javascript:void(location.href='podcast://exua2podcast.appspot.com/xspf2podcast?xspf=http://www.ex.ua'+$('a[href$=xspf]').attr('href')+'&img='+($('img[src$=&quot;?1600&quot;]').attr('src')||''))">
 Перейдіть, щоб встановити шорткат для Safari.
 </a>
+<a href="/shortcutVk.jsp?javascript:void(location.href='podcast://exua2podcast.appspot.com/vk2podcast?vk='+location.href.match(/wall-\d+_\d+/)[0])">
+VK Shortcut
+</a>

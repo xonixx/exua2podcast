@@ -84,6 +84,7 @@ public class Vk2PodcastServlet extends HttpServlet {
 
             for (Element div : audioDivs) {
                 String mp3url = div.select("input[type=\"hidden\"][id^=\"audio_info\"]").first().val();
+                mp3url = mp3url.split("\\?")[0];
                 String name = div.select("div.title_wrap").first().text().trim();
 
                 nu.xom.Element item = new nu.xom.Element("item");
