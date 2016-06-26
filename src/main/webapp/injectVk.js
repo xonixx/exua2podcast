@@ -25,7 +25,8 @@ function any2Podcast() {
         var name = artist + ' - ' + title1;
         podcast.items.push({name: name, url: url});
     }
-    console.info('http://localhost:8080/any2podcast?' + encodeURIComponent(JSON.stringify(podcast)))
+    
+    location.href = 'podcast://exua2podcast.appspot.com/any2podcast?' + encodeURIComponent(JSON.stringify(podcast));
 }
 
 any2Podcast();

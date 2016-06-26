@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.URLDecoder;
 import java.util.Collection;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -26,7 +27,7 @@ public class Any2PodcastServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String data = req.getParameter("q");
+        String data = URLDecoder.decode(req.getQueryString(), "UTF-8");
 
         try (ServletOutputStream outputStream = resp.getOutputStream()) {
 
