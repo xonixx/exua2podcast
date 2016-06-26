@@ -26,7 +26,7 @@ public class Any2PodcastServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String data = req.getQueryString();
+        String data = req.getParameter("q");
 
         try (ServletOutputStream outputStream = resp.getOutputStream()) {
 
@@ -59,9 +59,9 @@ public class Any2PodcastServlet extends HttpServlet {
                 channel.appendChild(titleE);
             }
 
-            Element link = new Element("link");
-            link.appendChild(link);
-            channel.appendChild(link);
+//            Element linkE = new Element("link");
+//            linkE.appendChild("TBD");
+//            channel.appendChild(linkE);
 
             if (img != null) {
                 Element imgE = new Element("itunes:image", "http://www.itunes.com/dtds/podcast-1.0.dtd");

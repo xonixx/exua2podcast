@@ -5,17 +5,29 @@
         <servlet-class>info.xonix.Xspf2PodcastServlet</servlet-class>
     </servlet>
     <servlet>
+        <servlet-name>any2podcast</servlet-name>
+        <servlet-class>info.xonix.Any2PodcastServlet</servlet-class>
+    </servlet>
+<!--
+    <servlet>
         <servlet-name>vk2podcast</servlet-name>
         <servlet-class>info.xonix.Vk2PodcastServlet</servlet-class>
     </servlet>
+-->
     <servlet-mapping>
         <servlet-name>xspf2podcast</servlet-name>
         <url-pattern>/xspf2podcast</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
+        <servlet-name>any2podcast</servlet-name>
+        <url-pattern>/any2podcast</url-pattern>
+    </servlet-mapping>
+<!--
+    <servlet-mapping>
         <servlet-name>vk2podcast</servlet-name>
         <url-pattern>/vk2podcast</url-pattern>
     </servlet-mapping>
+-->
     <welcome-file-list>
         <welcome-file>index.jsp</welcome-file>
     </welcome-file-list>
