@@ -14,7 +14,7 @@ VK Shortcut
  "if(!window.any2Podcast){" +
     "var s=document.createElement('script');" +
     "s.type='application/javascript';" +
-    "s.src='https://exua2podcast.appspot.com/injectVk.js';" +
+    "s.src='https://exua2podcast.appspot.com/injectVk.js?'+new Date().getTime();" +
     "document.body.appendChild(s)" +
  "}else any2Podcast()" +
 "})()"
