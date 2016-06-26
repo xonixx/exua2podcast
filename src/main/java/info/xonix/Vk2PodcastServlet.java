@@ -51,8 +51,9 @@ public class Vk2PodcastServlet extends HttpServlet {
 
             Document document = Jsoup.parse(vkWallPageText);
 
+            Element imgElt = document.select("div.page_post_sized_full_thumb_first img").first();
+            Element descrElt = document.select("div.wall_post_text").first();
             Elements audioDivs = document.select("div.audio[id^=\"audio\"]");
-//            Elements elts = document.select("input[type=\"hidden\"][id^=\"audio_info\"]");
 
             nu.xom.Element rss = new nu.xom.Element("rss");
             rss.addNamespaceDeclaration("itunes", "http://www.itunes.com/dtds/podcast-1.0.dtd");
@@ -61,18 +62,25 @@ public class Vk2PodcastServlet extends HttpServlet {
             nu.xom.Element channel = new nu.xom.Element("channel");
             rss.appendChild(channel);
 
-            nu.xom.Element title = new nu.xom.Element("title");
-            title.appendChild("TODO");
-            channel.appendChild(title);
+            if (descrElt != null) {
+                nu.xom.Element title = new nu.xom.Element("title");
+                String descr = descrElt.text().trim();
+                if (descr.length() > 50) {
+                    descr = descr.substring(0, 50) + "...";
+                }
+                title.appendChild(descr);
+                channel.appendChild(title);
+            }
 
             nu.xom.Element link = new nu.xom.Element("link");
             link.appendChild(vkWallUrl);
             channel.appendChild(link);
 
-            nu.xom.Element img = new nu.xom.Element("itunes:image", "http://www.itunes.com/dtds/podcast-1.0.dtd");
-            img.addAttribute(new Attribute("href", "TODO"));
-//            img.addNamespaceDeclaration("itunes", "http://www.itunes.com/dtds/podcast-1.0.dtd");
-            channel.appendChild(img);
+            if (imgElt != null) {
+                nu.xom.Element img = new nu.xom.Element("itunes:image", "http://www.itunes.com/dtds/podcast-1.0.dtd");
+                img.addAttribute(new Attribute("href", imgElt.attr("src")));
+                channel.appendChild(img);
+            }
 
             for (Element div : audioDivs) {
                 String mp3url = div.select("input[type=\"hidden\"][id^=\"audio_info\"]").first().val();
@@ -89,7 +97,6 @@ public class Vk2PodcastServlet extends HttpServlet {
                 item.appendChild(enclosure);
 
                 channel.appendChild(item);
-
             }
 
 
