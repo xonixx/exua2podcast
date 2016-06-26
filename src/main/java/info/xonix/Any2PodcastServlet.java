@@ -11,10 +11,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.net.URLDecoder;
+import java.io.InputStreamReader;
 import java.util.Collection;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
 /**
@@ -23,14 +23,31 @@ import java.util.logging.Logger;
 public class Any2PodcastServlet extends HttpServlet {
     private static final Logger log = Logger.getLogger(Any2PodcastServlet.class.getName());
 
+    private static Map<String, Map> podcastsMap = new ConcurrentHashMap<>();
+
     public static final Gson gson = new Gson();
 
     @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String uid = req.getParameter("uid");
+        Map json = gson.fromJson(new InputStreamReader(req.getInputStream()), Map.class);
+
+        log.info("uid: " + uid + ", json: " + json);
+
+        podcastsMap.put(uid, json);
+
+        resp.addHeader("Access-Control-Allow-Origin", "*");
+        resp.addHeader("Access-Control-Allow-Headers", "accept, content-type");
+    }
+
+    @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String data = URLDecoder.decode(req.getQueryString(), "UTF-8");
+        String uid = req.getParameter("uid");
+//        String data = URLDecoder.decode(req.getQueryString(), "UTF-8");
 
         try (ServletOutputStream outputStream = resp.getOutputStream()) {
 
+/*
             if (data == null || "".equals(data = data.trim())) {
                 resp.setContentType("text/html");
                 resp.setStatus(400);
@@ -39,8 +56,9 @@ public class Any2PodcastServlet extends HttpServlet {
                 writer.flush();
                 return;
             }
+*/
 
-            Map podcastJson = gson.fromJson(data, Map.class);
+            Map podcastJson = podcastsMap.get(uid);
             String title = (String) podcastJson.get("title");
             String img = (String) podcastJson.get("img");
             Collection<Map> items = (Collection<Map>) podcastJson.get("items");
