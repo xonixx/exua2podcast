@@ -28,11 +28,16 @@ public class Any2PodcastServlet extends HttpServlet {
     public static final Gson gson = new Gson();
 
     @Override
+    protected void doOptions(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        resp.addHeader("Access-Control-Allow-Origin", "*");
+        resp.addHeader("Access-Control-Allow-Headers", "accept, content-type");
+    }
+    @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String uid = req.getParameter("uid");
-        Map json = gson.fromJson(new InputStreamReader(req.getInputStream()), Map.class);
+        Map json = gson.fromJson(new InputStreamReader(req.getInputStream(), "UTF-8"), Map.class);
 
-        log.info("uid: " + uid + ", json: " + json);
+        log.warning("uid: " + uid + ", json: " + json);
 
         podcastsMap.put(uid, json);
 
@@ -43,20 +48,8 @@ public class Any2PodcastServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String uid = req.getParameter("uid");
-//        String data = URLDecoder.decode(req.getQueryString(), "UTF-8");
 
         try (ServletOutputStream outputStream = resp.getOutputStream()) {
-
-/*
-            if (data == null || "".equals(data = data.trim())) {
-                resp.setContentType("text/html");
-                resp.setStatus(400);
-                PrintWriter writer = new PrintWriter(outputStream);
-                writer.println("Please provide data!");
-                writer.flush();
-                return;
-            }
-*/
 
             Map podcastJson = podcastsMap.get(uid);
             String title = (String) podcastJson.get("title");
@@ -104,7 +97,6 @@ public class Any2PodcastServlet extends HttpServlet {
 
                 channel.appendChild(itemE);
             }
-
 
             Serializer serializer = new Serializer(outputStream, "UTF-8");
             serializer.setIndent(4);
