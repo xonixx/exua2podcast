@@ -12,9 +12,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.PrintStream;
 import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -32,6 +34,7 @@ public class Any2PodcastServlet extends HttpServlet {
         resp.addHeader("Access-Control-Allow-Origin", "*");
         resp.addHeader("Access-Control-Allow-Headers", "accept, content-type");
     }
+
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String uid = req.getParameter("uid");
@@ -47,13 +50,26 @@ public class Any2PodcastServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String uid = req.getParameter("uid");
+        ServletOutputStream outputStream = resp.getOutputStream();
 
-        try (ServletOutputStream outputStream = resp.getOutputStream()) {
+        try {
+            String uid = req.getParameter("uid");
+
+            resp.setCharacterEncoding("UTF-8");
 
             Map podcastJson = podcastsMap.get(uid);
+
+            if (podcastJson == null) {
+                resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                PrintStream printStream = new PrintStream(outputStream);
+                printStream.print("Not found: " + uid);
+                printStream.flush();
+                return;
+            }
+
             String title = (String) podcastJson.get("title");
             String img = (String) podcastJson.get("img");
+            String link = (String) podcastJson.get("link");
             Collection<Map> items = (Collection<Map>) podcastJson.get("items");
 
             resp.setContentType("application/rss+xml");
@@ -71,9 +87,11 @@ public class Any2PodcastServlet extends HttpServlet {
                 channel.appendChild(titleE);
             }
 
-//            Element linkE = new Element("link");
-//            linkE.appendChild("TBD");
-//            channel.appendChild(linkE);
+            if (link != null) {
+                Element linkE = new Element("link");
+                linkE.appendChild(link);
+                channel.appendChild(linkE);
+            }
 
             if (img != null) {
                 Element imgE = new Element("itunes:image", "http://www.itunes.com/dtds/podcast-1.0.dtd");
@@ -87,6 +105,10 @@ public class Any2PodcastServlet extends HttpServlet {
 
                 Element itemE = new Element("item");
                 Element itemTitle = new Element("title");
+
+                // tmp for troubleshoot
+                name += " (" + url + ")";
+
                 itemTitle.appendChild(name);
                 itemE.appendChild(itemTitle);
 
@@ -100,12 +122,18 @@ public class Any2PodcastServlet extends HttpServlet {
 
             Serializer serializer = new Serializer(outputStream, "UTF-8");
             serializer.setIndent(4);
-            serializer.setMaxLength(64);
+            serializer.setMaxLength(0);
             serializer.write(new nu.xom.Document(rss));
 
             outputStream.flush();
+        } catch (Exception e) {
+            log.log(Level.SEVERE, "Error", e);
+            resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            resp.setContentType("text/html");
+            PrintStream printStream = new PrintStream(outputStream);
+            printStream.println("<H1>Error :(</H1>");
+            printStream.print(e.getMessage());
+            printStream.flush();
         }
-
-        resp.setCharacterEncoding("UTF-8");
     }
 }

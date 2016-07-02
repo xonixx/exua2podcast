@@ -1,8 +1,14 @@
-
 function any2Podcast() {
     try {
+        var podcastId = location.href.match(/wall-\d+_\d+/)[0];
+        if (!podcastId) {
+            alert('Not a wall post!');
+            return;
+        }
+
         var d = ['Debug:'];
-        
+        d.push('podcastId: ' + podcastId);
+
         var podcast = {items: []};
 
         var img = document.querySelector('img.thumb_map_img');
@@ -18,6 +24,11 @@ function any2Podcast() {
         }
 
         var audios = document.querySelectorAll('div.medias_audios_list div.ai_body');
+        if (!audios.length) {
+            alert('No audios!');
+            return;
+        }
+
         d.push('audios: ' + audios.length);
 
         for (var i = 0; i < audios.length; i++) {
@@ -30,9 +41,6 @@ function any2Podcast() {
             podcast.items.push({name: name, url: url});
         }
 
-        var podcastId = location.href.match(/wall-\d+_\d+/)[0];
-
-        d.push('podcastId: ' + podcastId);
         var xhr = new XMLHttpRequest();
         xhr.open('POST', 'https://exua2podcast.appspot.com/any2podcast?uid=' + podcastId);
         xhr.setRequestHeader('Content-Type', 'application/json');
