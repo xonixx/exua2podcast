@@ -1,6 +1,6 @@
 function any2Podcast() {
     try {
-        var podcastId = location.href.match(/wall-\d+_\d+/)[0];
+        var podcastId = (location.href.match(/wall-\d+_\d+/) || {})[0];
         if (!podcastId) {
             alert('Not a wall post!');
             return;
